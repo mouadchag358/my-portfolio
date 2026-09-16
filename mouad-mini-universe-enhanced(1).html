@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouad Chag — Full-Stack Developer Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #231c18;
+            color: #f7f3ee;
+        }
+
+        #webgl-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* UI Overlays & Navigation */
+        .ui-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2.5rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: auto;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #fff;
+            background: rgba(40, 30, 25, 0.6);
+            backdrop-filter: blur(12px);
+            padding: 0.75rem 1.25rem;
+            border-radius: 99px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            width: 8px;
+            height: 8px;
+            background: #ff7b54;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px #ff7b54;
+        }
+
+        .hint-text {
+            background: rgba(40, 30, 25, 0.6);
+         
+            padding: 0.75rem 1.25rem;
+            border-radius: 99px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #d1c7bc;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Minimal Footer Navigation */
+        nav {
+            pointer-events: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(30, 22, 18, 0.75);
+            backdrop-filter: blur(16px);
+            padding: 0.6rem 1rem;
+            border-radius: 99px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            margin: 0 auto;
+        }
+
+        nav button {
+            background: transparent;
+            border: none;
+            color: #b8aba0;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            border-radius: 99px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        nav button:hover, nav button.active {
+            background: #ff7b54;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255, 123, 84, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Tooltip */
+        #tooltip {
+            position: fixed;
+            z-index: 20;
+            background: #1a120e;
+            color: #f7f3ee;
+            padding: 0.5rem 0.9rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            transform: translate(-50%, -140%);
+        }
+
+        /* Back/Close Button when book is open */
+        #close-btn {
+            position: fixed;
+            top: 2.5rem;
+            right: 2.5rem;
+            z-index: 30;
+            background: #ff7b54;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 99px;
+            font-weight: 700;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(255,123,84,0.4);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        #close-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #close-btn:hover {
+            background: #ff6232;
+            transform: scale(1.05);
+        }
+
+        /* HTML Content overlays inside books */
+        .content-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 80vw;
+            max-width: 900px;
+            height: 75vh;
+            background: #faf6f0;
+            color: #2b211c;
+            border-radius: 20px;
+            z-index: 25;
+            padding: 3rem;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+        .content-panel.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Scrollbar styling for content panels */
+        .content-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+        .content-panel::-webkit-scrollbar-track {
+            background: #f0e6dc;
+            border-radius: 4px;
+        }
+        .content-panel::-webkit-scrollbar-thumb {
+            background: #d4c2b4;
+            border-radius: 4px;
+        }
+
+        .content-header {
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e8dfd5;
+            padding-bottom: 1.25rem;
+        }
+        .content-header h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: #1a120e;
+            letter-spacing: -0.03em;
+        }
+        .content-header p {
+            color: #7a6b60;
+            font-size: 1.05rem;
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
+
+        /* Grid & Cards inside panels */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+        .project-card {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 14px;
+            border: 1px solid #efe6dd;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+        }
+        .project-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #1a120e;
+        }
+        .project-card p {
+            font-size: 0.9rem;
+            color: #6a5d53;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1.25rem;
+        }
+        .tech-tag {
+            background: #f4efe9;
+            color: #5c4f44;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+        }
+        .card-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .btn-link {
+            flex: 1;
+            text-align: center;
+            background: #2b211c;
+            color: #fff;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s ease;
+        }
+        .btn-link:hover {
+            background: #ff7b54;
+        }
+
+        /* Skills badges */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 1rem;
+        }
+        .skill-badge {
+            background: #ffffff;
+            border: 1px solid #efe6dd;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #3b2f28;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+        }
+        .skill-badge:hover {
+            background: #ff7b54;
+            color: #fff;
+            transform: translateY(-3px);
+            border-color: #ff7b54;
+            box-shadow: 0 8px 20px rgba(255,123,84,0.3);
+        }
+
+        /* Timeline Experience */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            border-left: 2px solid #e2d5cb;
+            margin-left: 0.5rem;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.35rem;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            background: #ff7b54;
+            border-radius: 50%;
+            border: 3px solid #faf6f0;
+        }
+        .timeline-item h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1a120e;
+        }
+        .timeline-item span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #ff7b54;
+            display: block;
+            margin-bottom: 0.35rem;
+        }
+        .timeline-item p {
+            font-size: 0.9rem;
+            color: #6a5d53;
+        }
+
+        /* Contact Section */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+        .contact-info p {
+            font-size: 1.05rem;
+            color: #5c4f44;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .contact-link-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #ffffff;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #2b211c;
+            font-weight: 700;
+            border: 1px solid #efe6dd;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+        }
+        .contact-link-item:hover {
+            border-color: #ff7b54;
+            transform: translateX(5px);
+            color: #ff7b54;
+        }
+
+        @media(max-width: 768px) {
+            .ui-layer { padding: 1.25rem; }
+            .contact-container { grid-template-columns: 1fr; }
+            .content-panel { width: 92vw; height: 80vh; padding: 1.5rem; }
+        }
+
+        /* --- Motion / polish layer --- */
+        #webgl-container canvas { display:block; }
+        body { cursor: default; }
+        .ui-layer {
+            transition: opacity .35s ease, transform .5s cubic-bezier(.16,1,.3,1);
+        }
+        body.book-open .ui-layer { opacity: .18; transform: translateY(-10px); }
+        .content-panel {
+            transform-origin: 50% 55%;
+            will-change: transform, opacity, filter;
+            backdrop-filter: blur(2px);
+        }
+        .content-panel.active {
+            animation: panelIn .65s cubic-bezier(.16,1,.3,1) both;
+        }
+        @keyframes panelIn {
+            0% { opacity:0; transform:translate(-50%,-46%) scale(.88) rotateX(8deg); filter:blur(8px); }
+            55% { opacity:1; transform:translate(-50%,-51%) scale(1.015) rotateX(0); filter:blur(0); }
+            100% { opacity:1; transform:translate(-50%,-50%) scale(1) rotateX(0); }
+        }
+        .project-card, .skill-badge, .contact-link-item { will-change: transform; }
+        .project-card:hover { transform: translateY(-9px) scale(1.015) rotateX(1deg); }
+        .skill-badge:hover { transform: translateY(-6px) scale(1.03) rotate(-1deg); }
+        nav { will-change: transform; }
+        nav button { position:relative; overflow:hidden; }
+        nav button::after {
+            content:''; position:absolute; inset:0; border-radius:inherit;
+            background:linear-gradient(120deg, transparent 20%, rgba(255,255,255,.22), transparent 80%);
+            transform:translateX(-130%); transition:transform .55s ease; pointer-events:none;
+        }
+        nav button:hover::after, nav button.active::after { transform:translateX(130%); }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="webgl-container"></div>
+    <div id="tooltip"></div>
+
+    <button id="close-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Drawer
+    </button>
+
+    <div class="ui-layer">
+        <header>
+            <div class="logo"><span></span> Mouad Chag</div>
+            <div class="hint-text">✨ Click or hover books to explore</div>
+        </header>
+
+        <nav id="bottom-nav">
+            <button data-index="-1" class="active">DRAWER</button>
+            <button data-index="0">ABOUT</button>
+            <button data-index="1">PROJECTS</button>
+            <button data-index="2">SKILLS</button>
+            <button data-index="3">EXPERIENCE</button>
+            <button data-index="4">EDUCATION</button>
+            <button data-index="5">CONTACT</button>
+        </nav>
+    </div>
+
+    <!-- HTML Content Panels -->
+    <div id="panel-0" class="content-panel">
+        <div class="content-header">
+            <h1>Mouad Chag</h1>
+            <p>Full-Stack Developer & Software Engineer</p>
+        </div>
+        <div style="font-size: 1.05rem; color: #5c4f44; line-height: 1.8; display: flex; flex-direction: column; gap: 1rem;">
+            <p>Hello! I'm Mouad, a passionate Full-Stack Developer specializing in crafting robust, beautiful, and user-centric web applications. I love bridging the gap between elegant frontend design and powerful scalable backend architecture.</p>
+            <p>Whether it's building performant enterprise portals, custom automation bots, or immersive 3D web experiences, I thrive on turning complex requirements into clean, maintainable code.</p>
+        </div>
+    </div>
+
+    <div id="panel-1" class="content-panel">
+        <div class="content-header">
+            <h1>Featured Projects</h1>
+            <p>Explore my real applications & tools via GitHub</p>
+        </div>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div>
+                    <h3>PFE Airport</h3>
+                    <p>Airport management and flight scheduling system built as an advanced graduation project.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Full-Stack</span>
+                        <span class="tech-tag">Database</span>
+                        <span class="tech-tag">UI/UX</span>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://github.com/mouadchag358" target="_blank" class="btn-link">GitHub</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <div>
+                    <h3>Biblio</h3>
+                    <p>Modern digital library management platform for cataloging, loan tracking, and member management.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">Database</span>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://github.com/mouadchag358" target="_blank" class="btn-link">GitHub</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <div>
+                    <h3>Bot Mail</h3>
+                    <p>Automated emailing bot designed to handle bulk communications, notifications, and inbox scheduling.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">API</span>
+                        <span class="tech-tag">Automation</span>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://github.com/mouadchag358" target="_blank" class="btn-link">GitHub</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <div>
+                    <h3>FastAPI App</h3>
+                    <p>High-performance asynchronous backend application featuring RESTful endpoints and robust security.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">FastAPI</span>
+                        <span class="tech-tag">REST API</span>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://github.com/mouadchag358" target="_blank" class="btn-link">GitHub</a>
+                </div>
+            </div>
+            <div class="project-card">
+                <div>
+                    <h3>Btt</h3>
+                    <p>Custom browser utility tool designed for streamlined navigation and performance enhancement.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Web Tech</span>
+                        <span class="tech-tag">Frontend</span>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://github.com/mouadchag358" target="_blank" class="btn-link">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="panel-2" class="content-panel">
+        <div class="content-header">
+            <h1>Skills & Technologies</h1>
+            <p>Core languages, frameworks, and tools I work with daily</p>
+        </div>
+        <div class="skills-grid">
+            <div class="skill-badge">HTML5</div>
+            <div class="skill-badge">CSS3</div>
+            <div class="skill-badge">JavaScript</div>
+            <div class="skill-badge">PHP</div>
+            <div class="skill-badge">Laravel</div>
+            <div class="skill-badge">Node.js</div>
+            <div class="skill-badge">Express</div>
+            <div class="skill-badge">MySQL</div>
+            <div class="skill-badge">Python</div>
+            <div class="skill-badge">C Language</div>
+            <div class="skill-badge">C#</div>
+            <div class="skill-badge">Git & GitHub</div>
+        </div>
+    </div>
+
+    <div id="panel-3" class="content-panel">
+        <div class="content-header">
+            <h1>Experience & Timeline</h1>
+            <p>My professional and academic journey</p>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item">
+                <span>Present</span>
+                <h3>Full-Stack Software Development</h3>
+                <p>Building complex scalable web applications, custom automated bots, and high-performance APIs.</p>
+            </div>
+            <div class="timeline-item">
+                <span>Academic & PFE</span>
+                <h3>PFE Airport & Advanced Systems</h3>
+                <p>Designed and deployed comprehensive enterprise architectures such as the PFE Airport and Biblio management suites.</p>
+            </div>
+            <div class="timeline-item">
+                <span>Foundations</span>
+                <h3>Software Engineering & Computer Science</h3>
+                <p>Mastered core programming paradigms across C, C#, Python, JavaScript, and modern web frameworks.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="panel-4" class="content-panel">
+        <div class="content-header">
+            <h1>Get In Touch</h1>
+            <p>Let's collaborate on your next big project</p>
+        </div>
+        <div class="contact-container">
+            <div class="contact-info">
+                <p>I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision. Feel free to reach out directly through any of the channels!</p>
+            </div>
+            <div class="contact-links">
+                <a href="mailto:mouad.chag@example.com" class="contact-link-item">
+                    <span>✉️</span> mouad.chag358@gmail.com
+                </a>
+                <a href="https://github.com/mouadchag358" target="_blank" class="contact-link-item">
+                    <span>🐙</span> github.com/mouadchag358
+                </a>
+                <a href="https://linkedin.com" target="_blank" class="contact-link-item">
+                    <span>💼</span> LinkedIn Profile
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="panel-5" class="content-panel">
+        <div class="content-header">
+            <h1>Education</h1>
+            <p>Learning, development and continuous improvement</p>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item">
+                <span>Development</span>
+                <h3>Technicien Spécialisé — Développement Informatique</h3>
+                <p>Web development, programming, databases, software engineering and application architecture.</p>
+            </div>
+            <div class="timeline-item">
+                <span>Law</span>
+                <h3>Private Law Background</h3>
+                <p>A complementary academic background that strengthens analysis, rigor and understanding of business requirements.</p>
+            </div>
+            <div class="timeline-item">
+                <span>Continuous Learning</span>
+                <h3>Modern Web & Backend Technologies</h3>
+                <p>Continuous practice with JavaScript, Node.js, Express, PHP, Laravel, Python, FastAPI, MySQL and Git.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Three.js, GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script>
+        // --- SCENE SETUP ---
+        const container = document.getElementById('webgl-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1d1714);
+        scene.fog = new THREE.FogExp2(0x1d1714, 0.035);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 2, 11);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.1;
+        container.appendChild(renderer.domElement);
+
+        // --- LIGHTING ---
+        const ambientLight = new THREE.AmbientLight(0xffedd0, 1.2);
+        scene.add(ambientLight);
+
+        const mainLight = new THREE.DirectionalLight(0xfff5ea, 1.8);
+        mainLight.position.set(5, 8, 7);
+        mainLight.castShadow = true;
+        mainLight.shadow.mapSize.width = 2048;
+        mainLight.shadow.mapSize.height = 2048;
+        mainLight.shadow.bias = -0.0001;
+        scene.add(mainLight);
+
+        const warmFill = new THREE.PointLight(0xff7b54, 2.5, 15);
+        warmFill.position.set(-4, 3, 4);
+        scene.add(warmFill);
+
+        const rimLight = new THREE.PointLight(0x73c2fb, 1.5, 15);
+        rimLight.position.set(4, -2, -2);
+        scene.add(rimLight);
+
+        // --- DUST PARTICLES ---
+        const particleCount = 200;
+        const particleGeometry = new THREE.BufferGeometry();
+        const particlePositions = new Float32Array(particleCount * 3);
+
+        for(let i = 0; i < particleCount * 3; i += 3) {
+            particlePositions[i] = (Math.random() - 0.5) * 12;
+            particlePositions[i+1] = (Math.random() - 0.5) * 8 + 1;
+            particlePositions[i+2] = (Math.random() - 0.5) * 8;
+        }
+        particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+        const particleMaterial = new THREE.PointsMaterial({
+            color: 0xffedd0,
+            size: 0.035,
+            transparent: true,
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending
+        });
+        const dustParticles = new THREE.Points(particleGeometry, particleMaterial);
+        scene.add(dustParticles);
+
+        // --- WOODEN DRAWER & SHELF ---
+        const drawerGroup = new THREE.Group();
+        scene.add(drawerGroup);
+
+        const woodMaterial = new THREE.MeshStandardMaterial({
+            color: 0x5a3d28,
+            roughness: 0.65,
+            metalness: 0.1
+        });
+
+        const drawerInnerMaterial = new THREE.MeshStandardMaterial({
+            color: 0x3b2517,
+            roughness: 0.8
+        });
+
+        // Drawer Outer Shell Frame
+        const outerBoxWidth = 8.2;
+        const outerBoxHeight = 4.4;
+        const outerBoxDepth = 4.2;
+
+        // Bottom base
+        const baseGeo = new THREE.BoxGeometry(outerBoxWidth, 0.3, outerBoxDepth);
+        const baseMesh = new THREE.Mesh(baseGeo, woodMaterial);
+        baseMesh.position.y = -outerBoxHeight/2;
+        baseMesh.castShadow = true;
+        baseMesh.receiveShadow = true;
+        drawerGroup.add(baseMesh);
+
+        // Back panel
+        const backGeo = new THREE.BoxGeometry(outerBoxWidth, outerBoxHeight, 0.3);
+        const backMesh = new THREE.Mesh(backGeo, woodMaterial);
+        backMesh.position.z = -outerBoxDepth/2;
+        backMesh.receiveShadow = true;
+        drawerGroup.add(backMesh);
+
+        // Sides
+        const sideGeo = new THREE.BoxGeometry(0.3, outerBoxHeight, outerBoxDepth);
+        const leftSide = new THREE.Mesh(sideGeo, woodMaterial);
+        leftSide.position.set(-outerBoxWidth/2, 0, 0);
+        leftSide.receiveShadow = true;
+        drawerGroup.add(leftSide);
+
+        const rightSide = new THREE.Mesh(sideGeo, woodMaterial);
+        rightSide.position.set(outerBoxWidth/2, 0, 0);
+        rightSide.receiveShadow = true;
+        drawerGroup.add(rightSide);
+
+        // Drawer Cavity / Front Pull-out Tray
+        const trayGroup = new THREE.Group();
+        trayGroup.position.set(0, -0.4, 0);
+        drawerGroup.add(trayGroup);
+
+        const trayBottomGeo = new THREE.BoxGeometry(7.6, 0.2, 3.8);
+        const trayBottom = new THREE.Mesh(trayBottomGeo, drawerInnerMaterial);
+        trayBottom.position.y = -1.8;
+        trayBottom.receiveShadow = true;
+        trayGroup.add(trayBottom);
+
+        const trayFrontGeo = new THREE.BoxGeometry(8.1, 1.05, 0.4);
+        const trayFront = new THREE.Mesh(trayFrontGeo, woodMaterial);
+        trayFront.position.set(0, -1.48, 1.9);
+        trayFront.castShadow = true;
+        trayFront.receiveShadow = true;
+        trayGroup.add(trayFront);
+
+        // Drawer Handle
+        const handleGeo = new THREE.CylinderGeometry(0.08, 0.08, 1.8, 16);
+        const handleMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.8, roughness: 0.2 });
+        const handle = new THREE.Mesh(handleGeo, handleMat);
+        handle.rotation.z = Math.PI / 2;
+        handle.position.set(0, -1.48, 2.2);
+        handle.castShadow = true;
+        trayGroup.add(handle);
+
+        const mountGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.3, 16);
+        const mount1 = new THREE.Mesh(mountGeo, handleMat);
+        mount1.position.set(-0.6, -1.48, 2.05);
+        mount1.castShadow = true;
+        trayGroup.add(mount1);
+        const mount2 = mount1.clone();
+        mount2.position.x = 0.6;
+        trayGroup.add(mount2);
+
+        // --- DECORATIVE OBJECTS AROUND DRAWER ---
+        // Small potted plant on top
+        const potGeo = new THREE.CylinderGeometry(0.3, 0.2, 0.5, 16);
+        const potMat = new THREE.MeshStandardMaterial({ color: 0xf0e6dc, roughness: 0.5 });
+        const pot = new THREE.Mesh(potGeo, potMat);
+        pot.position.set(3.5, 2.45, 0);
+        pot.castShadow = true;
+        drawerGroup.add(pot);
+
+        const plantGroup = new THREE.Group();
+        plantGroup.position.set(3.5, 2.75, 0);
+        for(let p = 0; p < 5; p++) {
+            const leafGeo = new THREE.SphereGeometry(0.18, 8, 8);
+            leafGeo.scale(0.6, 1.4, 0.6);
+            const leafMat = new THREE.MeshStandardMaterial({ color: 0x52796f, roughness: 0.4 });
+            const leaf = new THREE.Mesh(leafGeo, leafMat);
+            leaf.position.set((Math.random()-0.5)*0.3, Math.random()*0.2, (Math.random()-0.5)*0.3);
+            leaf.rotation.z = (Math.random()-0.5)*0.8;
+            leaf.rotation.x = (Math.random()-0.5)*0.8;
+            leaf.castShadow = true;
+            plantGroup.add(leaf);
+        }
+        drawerGroup.add(plantGroup);
+
+        // Small brass hourglass/decor object
+        const glassGeo = new THREE.ConeGeometry(0.2, 0.6, 16);
+        const glassMat = new THREE.MeshStandardMaterial({ color: 0xddb892, metalness: 0.5, roughness: 0.3 });
+        const decorObj = new THREE.Mesh(glassGeo, glassMat);
+        decorObj.position.set(-3.5, 2.5, 0);
+        decorObj.castShadow = true;
+        drawerGroup.add(decorObj);
+
+
+        // --- BOOKS CREATION ---
+        const bookData = [
+            { title: "ABOUT ME", color: 0xe63946, subtitle: "Full-Stack Developer" },    // Red
+            { title: "PROJECTS", color: 0x2a9d8f, subtitle: "GitHub Repositories" },    // Green
+            { title: "SKILLS", color: 0x457b9d, subtitle: "Technologies & Tools" },     // Blue
+            { title: "EXPERIENCE", color: 0xf4a261, subtitle: "Timeline & Career" },    // Orange
+            { title: "EDUCATION", color: 0x9b5de5, subtitle: "Degrees & Background" },  // Purple
+            { title: "CONTACT", color: 0xff006e, subtitle: "Get in Touch" }           // Pink
+        ];
+
+        const booksGroup = new THREE.Group();
+        trayGroup.add(booksGroup);
+
+        const books = [];
+        const bookWidth = 0.85;
+        const bookHeight = 2.4;
+        const bookDepth = 2.6;
+
+        const startX = -2.6;
+        const spacing = 1.05;
+
+        bookData.forEach((data, index) => {
+            const bookContainer = new THREE.Group();
+            
+            // Spine mesh
+            const spineGeo = new THREE.BoxGeometry(bookWidth, bookHeight, bookDepth);
+            const bookMat = new THREE.MeshStandardMaterial({
+                color: data.color,
+                roughness: 0.4,
+                metalness: 0.05
+            });
+
+            // Create canvas texture for spine title
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#' + data.color.toString(16).padStart(6, '0');
+            ctx.fillRect(0, 0, 128, 512);
+
+            // Gold decorative border line
+            ctx.strokeStyle = '#ffffffaa';
+            ctx.lineWidth = 6;
+            ctx.strokeRect(12, 12, 104, 488);
+
+            // Text
+            ctx.save();
+            ctx.translate(64, 256);
+            ctx.rotate(Math.PI / 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 32px "Plus Jakarta Sans", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(data.title, 0, 0);
+            ctx.restore();
+
+            const spineTexture = new THREE.CanvasTexture(canvas);
+            spineTexture.wrapS = THREE.RepeatWrapping;
+            spineTexture.wrapT = THREE.RepeatWrapping;
+
+            const materials = [
+                new THREE.MeshStandardMaterial({ color: 0xf4efe9, roughness: 0.75 }), // +X
+                new THREE.MeshStandardMaterial({ color: data.color, roughness: 0.4 }), // -X
+                new THREE.MeshStandardMaterial({ color: data.color, roughness: 0.4 }), // +Y
+                new THREE.MeshStandardMaterial({ color: data.color, roughness: 0.4 }), // -Y
+                new THREE.MeshStandardMaterial({ map: spineTexture, roughness: 0.38 }), // +Z / visible spine
+                new THREE.MeshStandardMaterial({ color: 0x332211, roughness: 0.9 })  // -Z
+            ];
+
+            const bookMesh = new THREE.Mesh(spineGeo, materials);
+            bookMesh.castShadow = true;
+            bookMesh.receiveShadow = true;
+            bookContainer.add(bookMesh);
+
+            // Natural slightly organic positioning in drawer
+            const xPos = startX + (index * spacing) + (Math.random() - 0.5) * 0.08;
+            const zPos = (Math.random() - 0.5) * 0.3;
+            const rotZ = (Math.random() - 0.5) * 0.08;
+
+            bookContainer.position.set(xPos, -0.35, zPos);
+            bookContainer.rotation.z = rotZ;
+
+            booksGroup.add(bookContainer);
+
+            books.push({
+                group: bookContainer,
+                mesh: bookMesh,
+                index: index,
+                data: data,
+                basePos: { x: xPos, y: -0.35, z: zPos },
+                baseRot: { x: 0, y: 0, z: rotZ }
+            });
+        });
+
+
+        // --- INTERACTION & RAYCASTING ---
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+        let hoveredBook = null;
+        let selectedBookIndex = null;
+        let isAnimating = false;
+
+        const tooltip = document.getElementById('tooltip');
+        const closeBtn = document.getElementById('close-btn');
+        const bottomNavButtons = document.querySelectorAll('#bottom-nav button');
+
+        // Give the scene a subtle cinematic camera target instead of hard camera rotations.
+        const cameraLook = new THREE.Vector3(0, 0.1, 0);
+        const cameraLookTarget = new THREE.Vector3(0, 0.1, 0);
+        const cameraBase = new THREE.Vector3(0, 2, 11);
+        const cameraOpen = new THREE.Vector3(0, 1.35, 7.0);
+
+        function setPointer(clientX, clientY) {
+            pointer.tx = (clientX / window.innerWidth - 0.5) * 2;
+            pointer.ty = (clientY / window.innerHeight - 0.5) * 2;
+            mouse.x = pointer.tx;
+            mouse.y = -pointer.ty;
+        }
+
+        function getBookFromIntersection(intersection) {
+            if (!intersection) return null;
+            return books.find(b => b.mesh === intersection.object || b.group === intersection.object.parent);
+        }
+
+        function onMouseMove(event) {
+            setPointer(event.clientX, event.clientY);
+            if (selectedBookIndex !== null || isAnimating) return;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(books.map(b => b.mesh), false);
+            const matched = getBookFromIntersection(intersects[0]);
+
+            if (matched) {
+                if (hoveredBook !== matched) {
+                    resetHoverState();
+                    hoveredBook = matched;
+                    document.body.style.cursor = 'pointer';
+                    tooltip.textContent = `${matched.data.title} — ${matched.data.subtitle}`;
+                    tooltip.style.opacity = '1';
+
+                    gsap.killTweensOf(matched.group);
+                    gsap.to(matched.group.position, {
+                        x: matched.basePos.x,
+                        y: matched.basePos.y + 0.42,
+                        z: matched.basePos.z + 0.18,
+                        duration: 0.5,
+                        ease: 'back.out(2.2)'
+                    });
+                    gsap.to(matched.group.rotation, {
+                        x: -0.035,
+                        y: 0.025,
+                        z: matched.baseRot.z,
+                        duration: 0.5,
+                        ease: 'power3.out'
+                    });
+                    gsap.to(matched.group.scale, { x: 1.045, y: 1.045, z: 1.045, duration: .45, ease:'power2.out' });
+
+                    books.forEach(b => {
+                        if (b !== matched) {
+                            const distance = Math.abs(b.index - matched.index);
+                            const direction = Math.sign(b.index - matched.index);
+                            gsap.to(b.group.position, {
+                                x: b.basePos.x + direction * Math.max(0, 0.12 - distance * 0.025),
+                                duration: 0.45,
+                                ease: 'power3.out'
+                            });
+                        }
+                    });
+                }
+                tooltip.style.left = `${event.clientX}px`;
+                tooltip.style.top = `${event.clientY}px`;
+            } else {
+                resetHoverState();
+            }
+        }
+
+        function resetHoverState() {
+            if (!hoveredBook || selectedBookIndex !== null) return;
+            document.body.style.cursor = 'default';
+            tooltip.style.opacity = '0';
+
+            books.forEach(b => {
+                gsap.killTweensOf(b.group);
+                gsap.to(b.group.position, {
+                    x: b.basePos.x, y: b.basePos.y, z: b.basePos.z,
+                    duration: 0.55, ease: 'power3.out'
+                });
+                gsap.to(b.group.rotation, {
+                    x: b.baseRot.x, y: b.baseRot.y, z: b.baseRot.z,
+                    duration: 0.5, ease: 'power3.out'
+                });
+                gsap.to(b.group.scale, { x:1, y:1, z:1, duration:.45, ease:'power2.out' });
+            });
+            hoveredBook = null;
+        }
+
+        function updateNav(activeIndex) {
+            bottomNavButtons.forEach(btn => {
+                btn.classList.toggle('active', Number(btn.dataset.index) === activeIndex);
+            });
+        }
+
+        function selectBook(index) {
+            if (isAnimating || selectedBookIndex === index || !books[index]) return;
+            isAnimating = true;
+            resetHoverState();
+            selectedBookIndex = index;
+            document.body.classList.add('book-open');
+            updateNav(index);
+
+            const targetBook = books[index];
+            const tl = gsap.timeline({
+                defaults: { overwrite: 'auto' },
+                onComplete: () => {
+                    isAnimating = false;
+                    closeBtn.classList.add('visible');
+                    const panel = document.getElementById(`panel-${index}`);
+                    if (panel) panel.classList.add('active');
+                }
+            });
+
+            // Camera: dolly in + slight side offset, with a soft look-at transition.
+            gsap.to(camera.position, {
+                x: index % 2 ? 0.55 : -0.55,
+                y: cameraOpen.y,
+                z: cameraOpen.z,
+                duration: 1.25,
+                ease: 'power4.inOut'
+            });
+            cameraLookTarget.set(0, 0.25, 1.8);
+            gsap.to(cameraLook, { x:0, y:0.25, z:1.8, duration:1.15, ease:'power3.inOut' });
+
+            // Pull the chosen book toward the viewer with a small "hero" arc.
+            tl.to(targetBook.group.position, {
+                x: index % 2 ? 0.75 : -0.75,
+                y: 0.15,
+                z: 3.0,
+                duration: 0.95,
+                ease: 'back.inOut(1.35)'
+            }, 0);
+            tl.to(targetBook.group.rotation, {
+                x: -0.06,
+                y: index % 2 ? -0.18 : 0.18,
+                z: 0,
+                duration: 0.95,
+                ease: 'power3.inOut'
+            }, 0);
+            tl.to(targetBook.group.scale, {
+                x: 1.18, y: 1.18, z: 1.18,
+                duration: 0.9,
+                ease: 'power3.out'
+            }, 0.08);
+
+            // Give the handle a satisfying little pull animation.
+            tl.to(trayGroup.position, { z: 0.16, duration:.35, ease:'power2.out' }, 0.05);
+            tl.to(trayGroup.position, { z: 0, duration:.65, ease:'elastic.out(1, .55)' }, 0.4);
+
+            // Push the remaining books away and dim their visual importance.
+            books.forEach((b, idx) => {
+                if (idx === index) return;
+                const dir = Math.sign(idx - index) || 1;
+                gsap.to(b.group.position, {
+                    x: b.basePos.x + dir * 1.15,
+                    y: b.basePos.y - 0.28,
+                    z: b.basePos.z - 0.35,
+                    duration: 0.8,
+                    ease: 'power3.inOut'
+                });
+                gsap.to(b.group.scale, { x:.82, y:.82, z:.82, duration:.8, ease:'power2.out' });
+            });
+        }
+
+        function closeBook() {
+            if (isAnimating || selectedBookIndex === null) return;
+            isAnimating = true;
+
+            const currentIndex = selectedBookIndex;
+            const currentPanel = document.getElementById(`panel-${currentIndex}`);
+            if (currentPanel) currentPanel.classList.remove('active');
+            closeBtn.classList.remove('visible');
+            document.body.classList.remove('book-open');
+            selectedBookIndex = null;
+            updateNav(-1);
+
+            // Reset camera and look target together for a smoother return.
+            gsap.to(camera.position, {
+                x: cameraBase.x, y: cameraBase.y, z: cameraBase.z,
+                duration: 1.15, ease: 'power4.inOut'
+            });
+            gsap.to(cameraLook, { x:0, y:0.1, z:0, duration:1.05, ease:'power3.inOut' });
+
+            books.forEach(b => {
+                gsap.to(b.group.position, {
+                    x:b.basePos.x, y:b.basePos.y, z:b.basePos.z,
+                    duration:.95, ease:'back.out(1.2)'
+                });
+                gsap.to(b.group.rotation, {
+                    x:b.baseRot.x, y:b.baseRot.y, z:b.baseRot.z,
+                    duration:.85, ease:'power3.out'
+                });
+                gsap.to(b.group.scale, { x:1, y:1, z:1, duration:.85, ease:'power3.out' });
+            });
+
+            gsap.to(trayGroup.position, {
+                x:0, y:-0.4, z:0,
+                duration:1,
+                ease:'power3.inOut',
+                onComplete: () => { isAnimating = false; }
+            });
+        }
+
+        function onClick(event) {
+            if (isAnimating || selectedBookIndex !== null) return;
+            setPointer(event.clientX, event.clientY);
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(books.map(b => b.mesh), false);
+            const matched = getBookFromIntersection(intersects[0]);
+            if (matched) selectBook(matched.index);
+        }
+
+        window.addEventListener('mousemove', onMouseMove, { passive:true });
+        window.addEventListener('click', onClick);
+        closeBtn.addEventListener('click', closeBook);
+
+        bottomNavButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const index = Number(btn.dataset.index);
+                if (index === -1) {
+                    if (selectedBookIndex !== null) closeBook();
+                    else updateNav(-1);
+                } else {
+                    if (selectedBookIndex !== null && selectedBookIndex !== index) {
+                        closeBook();
+                        gsap.delayedCall(0.85, () => selectBook(index));
+                    } else {
+                        selectBook(index);
+                    }
+                }
+            });
+        });
+
+        // --- WINDOW RESIZE ---
+        function handleResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+        }
+        window.addEventListener('resize', handleResize);
+
+        // --- ANIMATION LOOP ---
+        const clock = new THREE.Clock();
+
+        // Give each book a stable random phase so their idle motion feels organic.
+        books.forEach((book, i) => {
+            book.phase = i * 0.72 + Math.random() * 0.35;
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const elapsedTime = clock.getElapsedTime();
+
+            // Smooth pointer inertia — creates a subtle cinematic parallax.
+            pointer.x += (pointer.tx - pointer.x) * 0.055;
+            pointer.y += (pointer.ty - pointer.y) * 0.055;
+
+            const idle = selectedBookIndex === null && !isAnimating;
+            const bob = Math.sin(elapsedTime * 1.35) * 0.035;
+            const sway = Math.sin(elapsedTime * 0.55) * 0.025;
+
+            if (idle) {
+                drawerGroup.position.y += ((bob) - drawerGroup.position.y) * 0.06;
+                drawerGroup.rotation.y += ((pointer.x * 0.035 + sway) - drawerGroup.rotation.y) * 0.035;
+                drawerGroup.rotation.x += ((-pointer.y * 0.018) - drawerGroup.rotation.x) * 0.035;
+
+                books.forEach(book => {
+                    const idleY = book.basePos.y + Math.sin(elapsedTime * 1.15 + book.phase) * 0.035;
+                    const idleRot = book.baseRot.z + Math.sin(elapsedTime * 0.8 + book.phase) * 0.008;
+                    // Only apply idle movement when GSAP isn't actively controlling the book.
+                    if (hoveredBook !== book) {
+                        book.group.position.y += (idleY - book.group.position.y) * 0.045;
+                        book.group.rotation.z += (idleRot - book.group.rotation.z) * 0.045;
+                    }
+                });
+            } else {
+                drawerGroup.position.y += (0 - drawerGroup.position.y) * 0.06;
+                drawerGroup.rotation.y += (0 - drawerGroup.rotation.y) * 0.05;
+                drawerGroup.rotation.x += (0 - drawerGroup.rotation.x) * 0.05;
+            }
+
+            // Floating dust with a tiny vertical drift.
+            dustParticles.rotation.y = elapsedTime * 0.018;
+            dustParticles.position.y = Math.sin(elapsedTime * 0.35) * 0.08;
+
+            // Gentle plant sway and warm light breathing.
+            plantGroup.rotation.z = Math.sin(elapsedTime * 0.8) * 0.025;
+            warmFill.intensity = 2.35 + Math.sin(elapsedTime * 1.2) * 0.15;
+            rimLight.intensity = 1.45 + Math.sin(elapsedTime * 0.8 + 1) * 0.1;
+
+            // Smooth camera look-at. This is more stable than animating camera.rotation directly.
+            camera.lookAt(cameraLook);
+            camera.position.x += pointer.x * (selectedBookIndex === null ? 0.22 : 0.07) * 0.02;
+            camera.position.y += (-pointer.y * (selectedBookIndex === null ? 0.12 : 0.04)) * 0.02;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

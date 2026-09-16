@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mouad Chag — Full-Stack Developer</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="webgl-container"></div>
+
+    <div id="tooltip"></div>
+
+    <button id="close-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back to Shelf
+    </button>
+
+    <div class="ui-layer">
+
+        <header>
+            <div class="logo">
+                <span></span>
+                Mouad Chag
+            </div>
+
+            <div class="hint-text">
+                Explore the shelf · Hover a book
+            </div>
+        </header>
+
+        <nav id="bottom-nav">
+
+            <button data-index="-1" class="active">
+                SHELF
+            </button>
+
+            <button data-index="0">
+                ABOUT
+            </button>
+
+            <button data-index="1">
+                PROJECTS
+            </button>
+
+            <button data-index="2">
+                SKILLS
+            </button>
+
+            <button data-index="3">
+                EXPERIENCE
+            </button>
+
+            <button data-index="4">
+                EDUCATION
+            </button>
+
+            <button data-index="5">
+                CONTACT
+            </button>
+
+        </nav>
+
+    </div>
+
+
+    <!-- =========================
+         ABOUT
+    ========================== -->
+
+    <div id="panel-0" class="content-panel">
+
+        <div class="content-header">
+            <h1>Mouad Chag</h1>
+            <p>Full-Stack Developer & Software Engineer</p>
+        </div>
+
+        <div class="about-content">
+
+            <p>
+                Hello! I'm Mouad, a passionate Full-Stack Developer
+                specializing in crafting robust, beautiful and
+                user-centric web applications.
+            </p>
+
+            <p>
+                I enjoy bridging the gap between elegant frontend
+                experiences and powerful backend architectures.
+            </p>
+
+            <p>
+                From enterprise portals and automation tools to
+                immersive 3D web experiences, I like turning complex
+                requirements into clean and maintainable software.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         PROJECTS
+    ========================== -->
+
+    <div id="panel-1" class="content-panel">
+
+        <div class="content-header">
+            <h1>Featured Projects</h1>
+            <p>Explore my applications and tools</p>
+        </div>
+
+        <div class="projects-grid">
+
+            <div class="project-card">
+                <div>
+                    <h3>PFE Airport</h3>
+
+                    <p>
+                        Airport management and flight scheduling
+                        system developed as a graduation project.
+                    </p>
+
+                    <div class="tech-tags">
+                        <span>PHP</span>
+                        <span>MySQL</span>
+                        <span>PDO</span>
+                        <span>JavaScript</span>
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <a href="https://github.com/mouadchag358"
+                       target="_blank">
+                        GitHub
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="project-card">
+                <div>
+                    <h3>Biblio</h3>
+
+                    <p>
+                        Digital library management platform for
+                        books, members and lending operations.
+                    </p>
+
+                    <div class="tech-tags">
+                        <span>JavaScript</span>
+                        <span>Node.js</span>
+                        <span>Express</span>
+                        <span>MySQL</span>
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <a href="https://github.com/mouadchag358"
+                       target="_blank">
+                        GitHub
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="project-card">
+                <div>
+                    <h3>Bot Mail</h3>
+
+                    <p>
+                        Python automation system for collecting
+                        job opportunities and sending emails.
+                    </p>
+
+                    <div class="tech-tags">
+                        <span>Python</span>
+                        <span>FastAPI</span>
+                        <span>SQLAlchemy</span>
+                        <span>Automation</span>
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <a href="https://github.com/mouadchag358"
+                       target="_blank">
+                        GitHub
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="project-card">
+                <div>
+                    <h3>FastAPI App</h3>
+
+                    <p>
+                        Backend application featuring REST APIs,
+                        asynchronous processing and authentication.
+                    </p>
+
+                    <div class="tech-tags">
+                        <span>Python</span>
+                        <span>FastAPI</span>
+                        <span>REST</span>
+                        <span>API</span>
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <a href="https://github.com/mouadchag358"
+                       target="_blank">
+                        GitHub
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="project-card">
+                <div>
+                    <h3>Btt</h3>
+
+                    <p>
+                        Custom browser utility focused on improving
+                        navigation and productivity.
+                    </p>
+
+                    <div class="tech-tags">
+                        <span>JavaScript</span>
+                        <span>Web</span>
+                        <span>Frontend</span>
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <a href="https://github.com/mouadchag358"
+                       target="_blank">
+                        GitHub
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         SKILLS
+    ========================== -->
+
+    <div id="panel-2" class="content-panel">
+
+        <div class="content-header">
+            <h1>Skills & Technologies</h1>
+            <p>Languages, frameworks and tools</p>
+        </div>
+
+        <div class="skills-grid">
+
+            <div class="skill-badge">HTML5</div>
+            <div class="skill-badge">CSS3</div>
+            <div class="skill-badge">JavaScript</div>
+
+            <div class="skill-badge">PHP</div>
+            <div class="skill-badge">Laravel</div>
+
+            <div class="skill-badge">Node.js</div>
+            <div class="skill-badge">Express</div>
+
+            <div class="skill-badge">MySQL</div>
+
+            <div class="skill-badge">Python</div>
+            <div class="skill-badge">FastAPI</div>
+
+            <div class="skill-badge">C</div>
+            <div class="skill-badge">C#</div>
+
+            <div class="skill-badge">Git</div>
+            <div class="skill-badge">GitHub</div>
+
+            <div class="skill-badge">Three.js</div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         EXPERIENCE
+    ========================== -->
+
+    <div id="panel-3" class="content-panel">
+
+        <div class="content-header">
+            <h1>Experience</h1>
+            <p>My professional and technical journey</p>
+        </div>
+
+        <div class="timeline">
+
+            <div class="timeline-item">
+                <span>Present</span>
+
+                <h3>
+                    Full-Stack Software Development
+                </h3>
+
+                <p>
+                    Developing web applications, REST APIs,
+                    automation tools and interactive experiences.
+                </p>
+            </div>
+
+
+            <div class="timeline-item">
+                <span>Academic Project</span>
+
+                <h3>
+                    PFE Airport
+                </h3>
+
+                <p>
+                    Designed an airport management platform
+                    including flights, aircraft, companies,
+                    clients and reservations.
+                </p>
+            </div>
+
+
+            <div class="timeline-item">
+                <span>Development</span>
+
+                <h3>
+                    Web & Backend Development
+                </h3>
+
+                <p>
+                    Practical experience with PHP, Laravel,
+                    JavaScript, Node.js, Express, Python,
+                    FastAPI and MySQL.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         EDUCATION
+    ========================== -->
+
+    <div id="panel-4" class="content-panel">
+
+        <div class="content-header">
+            <h1>Education</h1>
+            <p>Academic background and continuous learning</p>
+        </div>
+
+        <div class="timeline">
+
+            <div class="timeline-item">
+
+                <span>Development</span>
+
+                <h3>
+                    Technicien Spécialisé —
+                    Développement Informatique
+                </h3>
+
+                <p>
+                    Web development, programming, databases,
+                    software engineering and application
+                    architecture.
+                </p>
+
+            </div>
+
+
+            <div class="timeline-item">
+
+                <span>Law</span>
+
+                <h3>
+                    Private Law Background
+                </h3>
+
+                <p>
+                    Academic background in private law,
+                    strengthening analytical thinking,
+                    rigor and understanding of business requirements.
+                </p>
+
+            </div>
+
+
+            <div class="timeline-item">
+
+                <span>Continuous Learning</span>
+
+                <h3>
+                    Modern Web Technologies
+                </h3>
+
+                <p>
+                    Continuous practice with JavaScript,
+                    Node.js, Express, PHP, Laravel, Python,
+                    FastAPI, MySQL and Git.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         CONTACT
+    ========================== -->
+
+    <div id="panel-5" class="content-panel">
+
+        <div class="content-header">
+            <h1>Get In Touch</h1>
+            <p>Let's build something together</p>
+        </div>
+
+        <div class="contact-container">
+
+            <div class="contact-info">
+
+                <p>
+                    I'm open to discussing projects,
+                    freelance opportunities and collaborations.
+                </p>
+
+            </div>
+
+            <div class="contact-links">
+
+                <a href="mailto:chagmouag9@gmail.com"
+                   class="contact-link-item">
+
+                    <span>✉</span>
+
+                    chagmouag9@gmail.com
+
+                </a>
+
+
+                <a href="https://github.com/mouadchag358"
+                   target="_blank"
+                   class="contact-link-item">
+
+                    <span>⌘</span>
+
+                    github.com/mouadchag358
+
+                </a>
+
+
+                <a href="https://www.linkedin.com/in/mouad-chaghali-79451b248/"
+                   target="_blank"
+                   class="contact-link-item">
+
+                    <span>in</span>
+
+                    LinkedIn Profile
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Libraries -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script src="index.js"></script>
+
+</body>
+</html>
