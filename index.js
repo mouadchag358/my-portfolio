@@ -2086,7 +2086,6 @@ function onMouseMove(event) {
         camera
     );
 
-
     const intersections =
         raycaster.intersectObjects(
             books.map(
@@ -2786,6 +2785,17 @@ function onClick(event) {
         mouse,
         camera
     );
+
+    const boomboxIntersections =
+        raycaster.intersectObject(
+            boomboxGroup,
+            true
+        );
+
+    if (boomboxIntersections.length > 0) {
+        window.toggleAudio();
+        return;
+    }
 
 
     const intersections =
