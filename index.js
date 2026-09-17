@@ -370,6 +370,255 @@ baseboard.position.set(
 scene.add(baseboard);
 
 
+// ============================================================
+// CHAIR AND WATER BOTTLE
+// ============================================================
+
+const chairWoodMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x8b5a3c,
+        roughness: 0.62
+    });
+
+const chairDarkMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x3e261b,
+        roughness: 0.78
+    });
+
+const chairFabricMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x9f604b,
+        roughness: 0.95
+    });
+
+const chairGroup =
+    new THREE.Group();
+
+chairGroup.position.set(
+    6,
+    2.4,
+    2
+);
+
+scene.add(chairGroup);
+
+const chairSeat =
+    new THREE.Mesh(
+        new THREE.BoxGeometry(2.05, 0.24, 1.55),
+        chairWoodMaterial
+    );
+
+chairSeat.position.y = -1.95;
+chairSeat.castShadow = true;
+chairSeat.receiveShadow = true;
+chairGroup.add(chairSeat);
+
+const chairCushion =
+    new THREE.Mesh(
+        new THREE.BoxGeometry(1.72, 0.16, 1.22),
+        chairFabricMaterial
+    );
+
+chairCushion.position.y = -1.75;
+chairCushion.castShadow = true;
+chairGroup.add(chairCushion);
+
+const chairLegGeometry =
+    new THREE.BoxGeometry(0.18, 2.15, 0.18);
+
+[
+    [-0.78, -0.58],
+    [0.78, -0.58],
+    [-0.78, 0.58],
+    [0.78, 0.58]
+].forEach(([x, z]) => {
+    const leg = new THREE.Mesh(
+        chairLegGeometry,
+        chairDarkMaterial
+    );
+
+    leg.position.set(x, -2.62, z);
+    leg.rotation.z = x < 0 ? -0.035 : 0.035;
+    leg.castShadow = true;
+    chairGroup.add(leg);
+});
+
+const chairBack =
+    new THREE.Mesh(
+        new THREE.BoxGeometry(2.05, 1.9, 0.18),
+        chairWoodMaterial
+    );
+
+chairBack.position.set(
+    1,
+    -0.78,
+    -0.67
+);
+
+chairBack.castShadow = true;
+chairBack.receiveShadow = true;
+chairGroup.add(chairBack);
+
+const chairBackInset =
+    new THREE.Mesh(
+        new THREE.BoxGeometry(1.55, 1.22, 0.08),
+        chairFabricMaterial
+    );
+
+chairBackInset.position.set(
+    0,
+    -0.82,
+    -0.56
+);
+
+chairBackInset.castShadow = true;
+chairGroup.add(chairBackInset);
+
+const bottleGroup =
+    new THREE.Group();
+
+bottleGroup.position.set(
+    2.6,
+    -0.70,
+    0.25
+);
+
+scene.add(bottleGroup);
+
+const bottleMaterial =
+    new THREE.MeshPhysicalMaterial({
+        color: 0x4f9db2,
+        roughness: 0.18,
+        metalness: 0.05,
+        transparent: true,
+        opacity: 0.88
+    });
+
+const bottleBody =
+    new THREE.Mesh(
+        new THREE.CylinderGeometry(0.24, 0.28, 0.92, 24),
+        bottleMaterial
+    );
+
+bottleBody.castShadow = true;
+bottleGroup.add(bottleBody);
+
+const bottleShoulder =
+    new THREE.Mesh(
+        new THREE.CylinderGeometry(0.19, 0.24, 0.16, 24),
+        bottleMaterial
+    );
+
+bottleShoulder.position.y = 0.54;
+bottleShoulder.castShadow = true;
+bottleGroup.add(bottleShoulder);
+
+const bottleCapMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x263d45,
+        roughness: 0.4,
+        metalness: 0.18
+    });
+
+const bottleCap =
+    new THREE.Mesh(
+        new THREE.CylinderGeometry(0.18, 0.18, 0.22, 24),
+        bottleCapMaterial
+    );
+
+bottleCap.position.y = 0.73;
+bottleCap.castShadow = true;
+bottleGroup.add(bottleCap);
+
+const bottleBand =
+    new THREE.Mesh(
+        new THREE.TorusGeometry(0.245, 0.025, 8, 24),
+        new THREE.MeshStandardMaterial({
+            color: 0xe6c46a,
+            roughness: 0.35,
+            metalness: 0.35
+        })
+    );
+
+bottleBand.rotation.x = Math.PI / 2;
+bottleBand.position.y = 0.22;
+bottleBand.castShadow = true;
+bottleGroup.add(bottleBand);
+
+
+// Load the original GLB assets and keep the primitives as a fallback.
+const gltfLoader =
+    new THREE.GLTFLoader();
+
+function prepareModel(model, targetHeight) {
+    model.traverse((child) => {
+        if (!child.isMesh)
+            return;
+
+        child.castShadow = true;
+        child.receiveShadow = true;
+    });
+
+    const initialBounds =
+        new THREE.Box3().setFromObject(model);
+
+    const initialSize =
+        initialBounds.getSize(new THREE.Vector3());
+
+    if (initialSize.y > 0)
+        model.scale.setScalar(
+            targetHeight / initialSize.y
+        );
+
+    model.updateMatrixWorld(true);
+
+    const scaledBounds =
+        new THREE.Box3().setFromObject(model);
+
+    model.position.y -= scaledBounds.min.y;
+
+    return model;
+}
+
+gltfLoader.load(
+    "chaise.glb",
+    (gltf) => {
+        chairGroup.remove(
+            ...chairGroup.children.filter(
+                (child) => child !== bottleGroup
+            )
+        );
+
+        const chairModel =
+            prepareModel(gltf.scene, 3.15);
+
+        chairModel.position.y = -3.1;
+        chairGroup.add(chairModel);
+    },
+    undefined,
+    (error) => {
+        console.error("Impossible de charger chaise.glb", error);
+    }
+);
+
+gltfLoader.load(
+    "gourde.glb",
+    (gltf) => {
+        bottleGroup.clear();
+
+        const bottleModel =
+            prepareModel(gltf.scene, 1.25);
+
+        bottleGroup.add(bottleModel);
+    },
+    undefined,
+    (error) => {
+        console.error("Impossible de charger gourde.glb", error);
+    }
+);
+
+
 
 const ambientLight =
     new THREE.AmbientLight(
@@ -694,6 +943,88 @@ shelfGroup.add(
 
 
 // ============================================================
+// GLTF SHELF DECOR
+// ============================================================
+
+function loadShelfItem(
+    path,
+    position,
+    height
+) {
+    const itemGroup =
+        new THREE.Group();
+
+    itemGroup.position.set(
+        position.x,
+        position.y,
+        position.z
+    );
+
+    shelfGroup.add(itemGroup);
+
+    gltfLoader.load(
+        path,
+        (gltf) => {
+            const model =
+                prepareModel(
+                    gltf.scene,
+                    height
+                );
+
+            itemGroup.add(model);
+        },
+        undefined,
+        (error) => {
+            console.error(
+                `Impossible de charger ${path}`,
+                error
+            );
+        }
+    );
+
+    return itemGroup;
+}
+
+const shelfSurfaceY = {
+    middle: middleShelf.position.y + woodThickness / 2,
+    upper: upperShelf.position.y + woodThickness / 2
+};
+
+const lanternGroup =
+    loadShelfItem(
+        "lantern.glb",
+        {
+            x: -3.05,
+            y: shelfSurfaceY.middle,
+            z: 0.15
+        },
+        1.25
+    );
+
+const antiqueCameraGroup =
+    loadShelfItem(
+        "antique-camera.glb",
+        {
+            x: -2.45,
+            y: shelfSurfaceY.upper,
+            z: 0.1
+        },
+        1.05
+    );
+
+const boomboxGroup =
+    loadShelfItem(
+        "boombox.glb",
+        {
+            x: 0.25,
+            y: shelfSurfaceY.upper,
+            z: 0.15
+        },
+        0.95
+    );
+
+
+// ============================================================
 // PLANT
 // ============================================================
 
@@ -795,6 +1126,219 @@ for (
 
 shelfGroup.add(
     plantGroup
+);
+
+
+// ============================================================
+// LOWER SHELF DECOR
+// ============================================================
+
+const lowerShelfSurfaceY =
+    bottomShelf.position.y + woodThickness / 2;
+
+const lowerDecorMaterials = [
+    new THREE.MeshStandardMaterial({
+        color: 0xc45b45,
+        roughness: 0.6
+    }),
+    new THREE.MeshStandardMaterial({
+        color: 0x356859,
+        roughness: 0.55
+    }),
+    new THREE.MeshStandardMaterial({
+        color: 0xd6a85f,
+        roughness: 0.62
+    })
+];
+
+const lowerBookStack =
+    new THREE.Group();
+
+lowerBookStack.position.set(
+    0.15,
+    lowerShelfSurfaceY,
+    0.08
+);
+
+const lowerBookSizes = [
+    { width: 1.25, height: 0.18, depth: 1.55, material: lowerDecorMaterials[0], rotation: -0.04 },
+    { width: 1.05, height: 0.2, depth: 1.4, material: lowerDecorMaterials[1], rotation: 0.06 },
+    { width: 1.18, height: 0.18, depth: 1.5, material: lowerDecorMaterials[2], rotation: -0.02 }
+];
+
+let lowerBookY = 0;
+
+lowerBookSizes.forEach(
+    (book) => {
+        const bookMesh =
+            new THREE.Mesh(
+                new THREE.BoxGeometry(
+                    book.width,
+                    book.height,
+                    book.depth
+                ),
+                book.material
+            );
+
+        bookMesh.position.y =
+            lowerBookY + book.height / 2;
+
+        bookMesh.rotation.y =
+            book.rotation;
+
+        bookMesh.castShadow = true;
+        bookMesh.receiveShadow = true;
+
+        lowerBookStack.add(bookMesh);
+
+        lowerBookY += book.height + 0.025;
+    }
+);
+
+shelfGroup.add(
+    lowerBookStack
+);
+
+const lowerVase =
+    new THREE.Mesh(
+        new THREE.CylinderGeometry(
+            0.24,
+            0.3,
+            0.55,
+            18
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xb86f52,
+            roughness: 0.5
+        })
+    );
+
+lowerVase.position.set(
+    1.85,
+    lowerShelfSurfaceY + 0.275,
+    0.08
+);
+
+lowerVase.castShadow = true;
+lowerVase.receiveShadow = true;
+
+shelfGroup.add(
+    lowerVase
+);
+
+const lowerVaseRim =
+    new THREE.Mesh(
+        new THREE.TorusGeometry(
+            0.225,
+            0.035,
+            8,
+            20
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xe0a27d,
+            roughness: 0.42
+        })
+    );
+
+lowerVaseRim.position.set(
+    1.85,
+    lowerShelfSurfaceY + 0.55,
+    0.08
+);
+
+lowerVaseRim.rotation.x =
+    Math.PI / 2;
+
+lowerVaseRim.castShadow = true;
+
+shelfGroup.add(
+    lowerVaseRim
+);
+
+const lowerFrame =
+    new THREE.Mesh(
+        new THREE.BoxGeometry(
+            1.05,
+            0.9,
+            0.12
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xd1a35f,
+            roughness: 0.5
+        })
+    );
+
+lowerFrame.position.set(
+    3.15,
+    lowerShelfSurfaceY + 0.48,
+    -0.08
+);
+
+lowerFrame.rotation.z =
+    -0.08;
+
+lowerFrame.castShadow = true;
+lowerFrame.receiveShadow = true;
+
+shelfGroup.add(
+    lowerFrame
+);
+
+const lowerFramePhoto =
+    new THREE.Mesh(
+        new THREE.BoxGeometry(
+            0.78,
+            0.62,
+            0.03
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0x6f8f8b,
+            roughness: 0.65
+        })
+    );
+
+lowerFramePhoto.position.set(
+    3.15,
+    lowerShelfSurfaceY + 0.48,
+    -0.145
+);
+
+lowerFramePhoto.rotation.z =
+    -0.08;
+
+shelfGroup.add(
+    lowerFramePhoto
+);
+
+gltfLoader.load(
+    "WaterBottle.glb",
+    (gltf) => {
+        lowerVase.visible = false;
+        lowerVaseRim.visible = false;
+
+        const waterBottleModel =
+            prepareModel(
+                gltf.scene,
+                0.95
+            );
+
+        waterBottleModel.position.set(
+            1.85,
+            lowerShelfSurfaceY +0.3,
+            0.08
+        );
+
+        shelfGroup.add(
+            waterBottleModel
+        );
+    },
+    undefined,
+    (error) => {
+        console.error(
+            "Impossible de charger WaterBottle.glb",
+            error
+        );
+    }
 );
 
 
@@ -2522,6 +3066,22 @@ function animate() {
         Math.sin(
             elapsed * 0.8
         ) * 0.025;
+
+
+    // --------------------------------
+    // CHAIR DETAILS
+    // --------------------------------
+
+    bottleGroup.rotation.z =
+        Math.sin(
+            elapsed * 0.9
+        ) * 0.018;
+
+    bottleGroup.position.y =
+        -0.70 +
+        Math.sin(
+            elapsed * 1.1
+        ) * 0.012;
 
 
     // --------------------------------
